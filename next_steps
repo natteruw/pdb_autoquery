@@ -1,0 +1,43 @@
+ for f in `cat D2_scaffolds.txt`; do pdb=`echo $f | cut -c 1-4 | tr '[:upper:]' '[:lower:]'`; dir=`echo $pdb | cut -c 2-3` ;ls /lab/databases/biounits/$dir/*$pdb* ; done > D2_biounits.list
+
+for f in `cat D6_scaffolds.txt`; do pdb=`echo $f | cut -c 1-4 | tr '[:upper:]' '[:lower:]'`; num=`grep $pdb D6_biounits.list | wc | grep -oP '^\s+\d+' | grep -oP '\d+'` ; echo $pdb' '$num ; done > D6_biounit_counts.txt
+
+for f in `cat *_scaffolds.txt`; do pdb=`echo $f | cut -c 1-4 | tr '[:upper:]' '[:lower:]'`; dir=`echo $pdb | cut -c 2-3` ;cp /lab/databases/biounits/$dir/*$pdb* ./$dir/ ; done
+
+Created for # = 2-6 :
+D#_biounit_counts.txt à lowercase pdb codes + how many biological assemblies
+D#_biounits.list à lists all pdb locations of pdbs identified by criteria (biol assem are separate)
+D#_scaffolds.txt à uppercase list of pdb codes and # biological assemblies
+
+for f in `ls */*.pdb*gz` ; do pdb=`echo $f | cut -f 2 -d '/' | cut -f 1 -d '.'` ; dir=`echo $pdb | cut -c 2-3` ; if [ -n "`grep 'AUTHOR DETERMINED BIOLOGICAL UNIT: TETRAMERIC' /lab/databases/wwpdb/$dir/$pdb.pdb`" ] ; then echo $dir/$pdb ; fi ; done > D2_author_verified.list
+
+maybe do a sort | uniq
+
+for f in `cat D2_biounits.list | cut -f 5- -d '/' | cut -f 1 -d '.'` ; do if [ -n "`grep 'AUTHOR DETERMINED BIOLOGICAL UNIT: TETRAMERIC' /lab/databases/wwpdb/$f.pdb`" ] ; then echo $f ; fi ; done > D2_author_verified.list
+
+sort D2_author_verified.list | uniq > temp
+
+mv temp D2_author_verified.list
+
+Created for # = 2-6:
+D#_author_verified.list  in natteruw@dig1 /database
+(list of all unique pdb codes for which the main pdb file contained ‘AUTHOR DETERMINED        	 BIOLOGICAL UNIT: *MERIC’
+
+for f in `cat D2_author_verified.list` ; do ls $f.pdb*.gz >> D2_pdbs.list ; done
+
+for f in `cat D2_seq90_biounits.list | tr '[:upper:]' '[:lower:]'`; do grep $f D2_author_verified.list ; done > D2_seq90_author_verified.list
+
+for f in `cat D2_seq90_author_verified.list` ; do for y in ${f}.pdb[0-9]; do echo $y `grep ATOM $y | cut -c 22|sort|uniq` ; done ; done > D2_seq90_autver_chainlength.list
+
+for f in `cat D2_seq90_author_verified.list` ; do for y in ${f}.pdb[0-9]; do echo $y `grep MODEL $y | cut -c 14|sort|uniq` ; done ; done > D2_seq90_autver_modelnum.list
+
+python test.py D2_seq90_autver_chainlength.list D2_seq90_autver_modelnum.list 4
+
+(need to look for test.py, was written with Yifan)
+
+Created for # = 2-6:
+D#_seq90_author_verified.list on lupe
+(list of all unique pdb codes for which the main pdb file contained ‘AUTHOR DETERMINED        	 BIOLOGICAL UNIT: *MERIC’ – seems to contain the different biological assemblies even if only one was author determined *meric, cutoff at 90% sequence homology)
+
+
+
