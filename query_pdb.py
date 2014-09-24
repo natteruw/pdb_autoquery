@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 #14.08.21 used rcsb.org's RESTful web services python script example to construct this
 #reports number of PDB entries found that fit the requirements listed below
 #contact: Una <natteruw@uw.edu>
@@ -5,10 +7,11 @@
 
 import urllib2
 
+for dihedral_symmetry in range(2,7):
+	print dihedral_symmetry
+	url = 'http://www.rcsb.org/pdb/rest/search'
 
-url = 'http://www.rcsb.org/pdb/rest/search'
-
-queryText = """
+	queryText = """
 
 <?xml version="1.0" encoding="UTF-8"?>
 
@@ -18,12 +21,12 @@ queryText = """
 <orgPdbQuery>
 <version>head</version>
 <queryType>org.pdb.query.simple.PointGroupQuery</queryType>
-<description>Finds PDB entries based on symmetry: Protein Symmetry is D6 and RMSD is between the default min 0.0 and the default max 7.0</description>
+<description>Finds PDB entries based on symmetry: Protein Symmetry is D%d and RMSD is between the default min 0.0 and the default max 7.0</description>
 <queryId>669312BE</queryId>
 <resultCount>5132</resultCount>
 <runtimeStart>2014-08-21T23:24:12Z</runtimeStart>
 <runtimeMilliseconds>1366</runtimeMilliseconds>
-<pointGroup>D6</pointGroup>
+<pointGroup>D%d</pointGroup>
 <rMSDComparator>between</rMSDComparator>
 </orgPdbQuery>
 
@@ -82,27 +85,25 @@ queryText = """
 </queryRefinement>
 </orgPdbCompositeQuery>
 
-"""
+"""%(dihedral_symmetry,dihedral_symmetry)
 
 
-print "query:\n", queryText
+	#print "query:\n", queryText
 
-print "querying PDB...\n"
+	#print "querying PDB...\n"
 
-req = urllib2.Request(url, data=queryText)
+	req = urllib2.Request(url, data=queryText)
 
-f = urllib2.urlopen(req)
+	f = urllib2.urlopen(req)
 
-result = f.read()
+	result = f.read()
 
 
-if result:
-
-	    print "Found number of PDB entries:", result.count('\n')
-	    print result
-	    temp=open('./updated_temp_id_lists/tempD6', 'w+')
-	    temp.write(result)
-
-else:
-
-	    print "Failed to retrieve results" 
+	if result:
+		print "Found number of PDB entries:", result.count('\n')
+		print result
+		result = result.lower()
+		temp=open('./updated_temp_id_lists/tempD%d'%(dihedral_symmetry), 'w+')
+		temp.write(result)
+	else:
+		print "Failed to retrieve results" 
