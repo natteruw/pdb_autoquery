@@ -1,0 +1,4 @@
+date	D2	D3	D4	D5	D6
+unknown	1710	704	152	106	28
+140821	1793	719	152	109	28
+140822	3119	1027	354	125	45	#changed chain length filter from 75-300 t0 75-500
