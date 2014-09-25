@@ -18,4 +18,4 @@ for dihedral_symmetry in range(2,7):
 	with open("diff_list_D%d"%dihedral_symmetry,"w") as diff_list_file:
 		print>>diff_list_file, "\n".join(diff_list)
 	
-	subprocess.check_output(['./pipeline_test.sh'],shell=True)
+subprocess.check_output(['./pipeline_test.sh'],shell=True)

@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import subprocess
+import os
 
 def diff(list_a, list_b):
 	new_pdbs = [] 
@@ -18,7 +19,10 @@ for dihedral_symmetry in range(2,7):
 	with open("diff_list_D%d"%dihedral_symmetry,"w") as diff_list_file:
 		print>>diff_list_file, "\n".join(diff_list)
 	
-	subprocess.check_output(['./pipeline_test.sh'],shell=True)
-	
-	#put outputs from above process into folder for new pdbs
-	# based on dihedral symmetry
+	os.chdir('/work/natteruw/pdb_autoquery/test/D%d'%dihedral_symmetry)	
+
+	subprocess.check_output(['../../pipeline_test.sh'],shell=True)
+
+	os.chdir('/work/natteruw/pdb_autoquery')
+
+	print 1	
